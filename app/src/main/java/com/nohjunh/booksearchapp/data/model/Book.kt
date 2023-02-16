@@ -1,9 +1,12 @@
 package com.nohjunh.booksearchapp.data.model
 
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @JsonClass(generateAdapter = true)
 data class Book(
     val authors: List<String>,
@@ -18,5 +21,5 @@ data class Book(
     val thumbnail: String,
     val title: String,
     val translators: List<String>,
-    val url: String
-)
+    val url: String // 해당 책의 상세설명 페이지 url을 나타냄
+) : Parcelable

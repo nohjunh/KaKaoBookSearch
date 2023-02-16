@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.nohjunh.booksearchapp.data.model.Book
 import com.nohjunh.booksearchapp.databinding.FragmentSearchBinding
 import com.nohjunh.booksearchapp.ui.adapter.BookSearchAdapter
 import com.nohjunh.booksearchapp.ui.viewmodel.BookSearchViewModel
@@ -19,6 +21,7 @@ class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
+    private lateinit var viewCreatedIns: View
 
     // 메인 액티비티에서 초기화 한 ViewModel 가져옴
     private lateinit var bookSearchViewModel: BookSearchViewModel
@@ -42,6 +45,7 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bookSearchViewModel = (activity as MainActivity).bookSearchViewModel
+        viewCreatedIns = view
 
         setupRecyclerView()
         searchBooks()
@@ -50,7 +54,6 @@ class SearchFragment : Fragment() {
             val books = it.documents
             bookSearchAdapter.submitList(books)
         })
-
     }
 
     override fun onDestroy() {
@@ -100,6 +103,16 @@ class SearchFragment : Fragment() {
             )
             binding.rvSearchResult.adapter = bookSearchAdapter
         }
+
+        // RV의 clickListener 설정
+        bookSearchAdapter.bookHolderClickListener =
+            object : BookSearchAdapter.BookHolderClickListener {
+                override fun onClick(view: View, positon: Int, book: Book) {
+                    val action = SearchFragmentDirections.actionSearchFragmentToBookFragment(book)
+                    Navigation.findNavController(viewCreatedIns).navigate(action)
+                }
+
+            }
     }
 
 

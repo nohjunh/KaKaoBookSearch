@@ -3,7 +3,8 @@ package com.nohjunh.booksearchapp.ui.view
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.nohjunh.booksearchapp.R
 import com.nohjunh.booksearchapp.data.repository.BookSearchRepositoryImpl
@@ -19,6 +20,7 @@ class MainActivity : AppCompatActivity() {
 
     // 액티비티에서 ViewModel을 초기화 시켜줌.
     private val bookSearchRepository = BookSearchRepositoryImpl()
+    private lateinit var navController: NavController
 
     // saveStateOwner는 this@MainActivity
     private val factory = BookSearchViewModelProviderFactory(bookSearchRepository, this)
@@ -40,10 +42,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupJetPackNavigation() {
         // navigation 작업할 때 각 component들이 bottom_navigation_menu와 main_nav에서의 ID가 같아야 함.
-        val bottomNavView = binding.bottomNavigationView
-        val navController =
-            findNavController(R.id.booksearch_nav_host_fragment)  // 네비게이션 컨트롤러 인스턴스를 취득
-        bottomNavView.setupWithNavController(navController)
+        val host = supportFragmentManager
+            .findFragmentById(R.id.booksearch_nav_host_fragment) as NavHostFragment? ?: return
+        navController = host.navController // 네비게이션 컨트롤러 인스턴스 취득
+        binding.bottomNavigationView.setupWithNavController(navController)
     }
 
 }

@@ -8,17 +8,42 @@
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.nohjunh.booksearchapp.ui.view.SearchFragment"
-        android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        android:label="@string/search"
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_searchFragment_to_bookFragment"
+            app:destination="@id/bookFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.nohjunh.booksearchapp.ui.view.FavoriteFragment"
-        android:label="fragment_favorite"
-        tools:layout="@layout/fragment_favorite" />
+        android:label="@string/favorite"
+        tools:layout="@layout/fragment_favorite">
+        <action
+            android:id="@+id/action_favoriteFragment_to_bookFragment"
+            app:destination="@id/bookFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.nohjunh.booksearchapp.ui.view.SettingsFragment"
-        android:label="fragment_settings"
+        android:label="@string/settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/bookFragment"
+        android:name="com.nohjunh.booksearchapp.ui.view.BookFragment"
+        android:label="@string/book_info"
+        tools:layout="@layout/fragment_book">
+        <argument
+            android:name="book"
+            app:argType="com.nohjunh.booksearchapp.data.model.Book" />
+    </fragment>
 
 </navigation>
