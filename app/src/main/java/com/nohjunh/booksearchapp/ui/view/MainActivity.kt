@@ -34,6 +34,13 @@ class MainActivity : AppCompatActivity() {
         // 메인 액티비티에서 ViewModel을 초기화 시켜줌.
         val bookSearchRepository = BookSearchRepositoryImpl(database)
 
+        /*
+        ViewModel의 생성자에 파라미터가 필요할 경우
+        ViewModelProvider.Factory, SavedStateViewModelFactory, AbstractSavedStateViewModelFactory
+        등을 생성해서 초기화 해주어야 했습니다.
+        매번 팩토리를 생성해야 되고 필요한 파라미터를 일일히 관리해주어야 하는 번거로운 일을
+        Koin과 Hilt가 위와 같은 방법으로 해결해 줄 수 있습니다.
+         */
         // saveStateOwner는 this@MainActivity
         val factory = BookSearchViewModelProviderFactory(bookSearchRepository, this)
         bookSearchViewModel = ViewModelProvider(this, factory)[BookSearchViewModel::class.java]
