@@ -1,6 +1,7 @@
 package com.nohjunh.booksearchapp.ui.viewmodel
 
 import androidx.lifecycle.*
+import com.nohjunh.booksearchapp.data.model.Book
 import com.nohjunh.booksearchapp.data.model.SearchResponse
 import com.nohjunh.booksearchapp.data.repository.BookSearchRepository
 import kotlinx.coroutines.Dispatchers
@@ -33,8 +34,22 @@ class BookSearchViewModel(
         }
     }
 
-    // SavedState
-    
+    // Room
+    // CRUD를 수행하는 suspend함수는 viewModelScope안에서 수행되도록 함.
+    // viewModelScope의 기본 디스패처는 Main이기에 파일IO를 수행하는
+    // Dispatchers.IO로 컨텍스트 변경
+    fun saveBook(book: Book) = viewModelScope.launch(Dispatchers.IO) {
+        bookSearchRepository.insertBooks(book)
+    }
+
+    fun deleteBook(book: Book) = viewModelScope.launch(Dispatchers.IO) {
+        bookSearchRepository.deleteBooks(book)
+    }
+
+    val favoriteBooks: LiveData<List<Book>>
+        get() = bookSearchRepository.getFavoriteBooks()
+
+    // --SavedState--
     // 저장 및 로드에 사용할 SAVE_STATE_KEY정의 후
     // edittext에 입력한 query를 보존할 var query 정의
     // query의 값이 벼경되면 그 값을 savedStateHandle에 set저장하도록 설정

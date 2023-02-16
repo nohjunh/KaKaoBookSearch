@@ -1,12 +1,13 @@
 package com.nohjunh.booksearchapp.ui.view
 
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.nohjunh.booksearchapp.R
+import com.nohjunh.booksearchapp.data.db.BookSearchDatabase
 import com.nohjunh.booksearchapp.data.repository.BookSearchRepositoryImpl
 import com.nohjunh.booksearchapp.databinding.ActivityMainBinding
 import com.nohjunh.booksearchapp.ui.viewmodel.BookSearchViewModel
@@ -18,19 +19,24 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    // 액티비티에서 ViewModel을 초기화 시켜줌.
-    private val bookSearchRepository = BookSearchRepositoryImpl()
+    lateinit var bookSearchViewModel: BookSearchViewModel
     private lateinit var navController: NavController
-
-    // saveStateOwner는 this@MainActivity
-    private val factory = BookSearchViewModelProviderFactory(bookSearchRepository, this)
-    val bookSearchViewModel: BookSearchViewModel by viewModels { factory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         setupJetPackNavigation()
+
+        // 메인 액티비티에서 Database를 구현해서 넘겨줌
+        val database = BookSearchDatabase.getInstance(this)
+
+        // 메인 액티비티에서 ViewModel을 초기화 시켜줌.
+        val bookSearchRepository = BookSearchRepositoryImpl(database)
+
+        // saveStateOwner는 this@MainActivity
+        val factory = BookSearchViewModelProviderFactory(bookSearchRepository, this)
+        bookSearchViewModel = ViewModelProvider(this, factory)[BookSearchViewModel::class.java]
 
         /*
         //앱이 처음 실행되었을 때만 화면에 searchFragment가 보이도록 고정

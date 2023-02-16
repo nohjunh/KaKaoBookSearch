@@ -9,12 +9,16 @@ import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.snackbar.Snackbar
 import com.nohjunh.booksearchapp.databinding.FragmentBookBinding
+import com.nohjunh.booksearchapp.ui.viewmodel.BookSearchViewModel
 
 class BookFragment : Fragment() {
 
     private var _binding: FragmentBookBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var bookSearchviewModel: BookSearchViewModel
 
     // 이전 프래그먼트로부터 전달받은 데이터 받기(safeArgs)
     // val safeArgs : [전달받은프래그먼트의이름]+[Args] by navArgs()
@@ -36,9 +40,12 @@ class BookFragment : Fragment() {
         return view
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
+    @SuppressLint("SetJavaScriptEnabled") // 웹뷰설정
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // 메인 액티비티의 ViewModel을 전달 받음.
+        bookSearchviewModel = (activity as MainActivity).bookSearchViewModel
 
         // 프래그먼트 전환 시 받은 아규먼트의 book 데이터를 가지고
         // 웹뷰에 표시
@@ -54,6 +61,10 @@ class BookFragment : Fragment() {
             Navigation.findNavController(view).popBackStack()
         }
 
+        binding.fabFavorite.setOnClickListener {
+            bookSearchviewModel.saveBook(book) // 프래그먼트로 전달 받은 book 아규먼트를 saveBook()에 넣어서 전달
+            Snackbar.make(view, "Book has saved", Snackbar.LENGTH_SHORT).show()
+        }
     }
 
     // onPause와 onResume으로 lifecycle에 따른 웹뷰 동작 설정

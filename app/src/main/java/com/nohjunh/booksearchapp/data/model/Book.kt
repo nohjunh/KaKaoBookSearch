@@ -11,6 +11,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @JsonClass(generateAdapter = true)
+// Book을 LiveData로 설정해 변화를 감지할 것이다.
+// data class Book()을 Entitiy로 해줬고
+// Entity테이블의 변화가 있을 때마다 변화를 감지하게 될 것이다.
 @Entity(tableName = "books")
 data class Book(
     // ROOM에서는 List<>와 같이 Primitive Type이 아닌 데이터형이 있을 수도 있다.
