@@ -7,7 +7,7 @@
     tools:context=".ui.view.MainActivity">
 
     <fragment
-        android:id="@+id/fragmentContainerView"
+        android:id="@+id/booksearch_nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navGraph="@navigation/main_nav" />
+        app:navGraph="@navigation/booksearch_nav_graph" />
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

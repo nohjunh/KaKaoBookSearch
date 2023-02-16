@@ -17,7 +17,6 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-
     // 액티비티에서 ViewModel을 초기화 시켜줌.
     private val bookSearchRepository = BookSearchRepositoryImpl()
 
@@ -29,20 +28,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        setupBottomNavigationView()
+        setupJetPackNavigation()
+
+        /*
         //앱이 처음 실행되었을 때만 화면에 searchFragment가 보이도록 고정
         if (savedInstanceState == null) {
             binding.bottomNavigationView.selectedItemId = R.id.searchFragment
         }
-
-
+        */
     }
 
-
-    private fun setupBottomNavigationView() {
+    private fun setupJetPackNavigation() {
         // navigation 작업할 때 각 component들이 bottom_navigation_menu와 main_nav에서의 ID가 같아야 함.
         val bottomNavView = binding.bottomNavigationView
-        val navController = findNavController(R.id.fragmentContainerView)
+        val navController =
+            findNavController(R.id.booksearch_nav_host_fragment)  // 네비게이션 컨트롤러 인스턴스를 취득
         bottomNavView.setupWithNavController(navController)
     }
+
 }
