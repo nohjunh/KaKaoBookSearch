@@ -20,8 +20,10 @@ class MainActivity : AppCompatActivity() {
 
     // 액티비티에서 ViewModel을 초기화 시켜줌.
     private val bookSearchRepository = BookSearchRepositoryImpl()
-    private val factory = BookSearchViewModelProviderFactory(bookSearchRepository)
-    private val bookSearchViewModel: BookSearchViewModel by viewModels { factory }
+
+    // saveStateOwner는 this@MainActivity
+    private val factory = BookSearchViewModelProviderFactory(bookSearchRepository, this)
+    val bookSearchViewModel: BookSearchViewModel by viewModels { factory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             binding.bottomNavigationView.selectedItemId = R.id.searchFragment
         }
-        
+
 
     }
 

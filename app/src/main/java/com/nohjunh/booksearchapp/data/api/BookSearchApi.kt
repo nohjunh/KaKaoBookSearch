@@ -13,7 +13,7 @@ import retrofit2.http.Query
 // 서비스는 API키와 인자를 전달받아 Book API에다가 GET요청을 하는 서비스
 interface BookSearchApi {
 
-    @Headers("Authorization: KaKaoAK $API_KEY") // 인증에 필요한 헤더
+    @Headers("Authorization: KakaoAK $API_KEY") // 인증에 필요한 헤더
     @GET("v3/search/book") // API
     suspend fun searchBooks(
         // 파라미터는 Query 어노테이션을 써서 전달

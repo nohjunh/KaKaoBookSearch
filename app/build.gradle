@@ -58,6 +58,9 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
+    // RecyclerView
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+
     // coil
     implementation("io.coil-kt:coil:2.2.2")
     implementation("io.coil-kt:coil-gif:2.2.2")
@@ -69,6 +72,7 @@ dependencies {
     // Lifecycle viewModelScope
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.5.1"
 
     // LiveData
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
