@@ -7,15 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nohjunh.booksearchapp.data.model.Book
 import com.nohjunh.booksearchapp.databinding.FragmentSearchBinding
-import com.nohjunh.booksearchapp.ui.adapter.BookSearchAdapter
+import com.nohjunh.booksearchapp.ui.adapter.BookSearchPagingAdapter
 import com.nohjunh.booksearchapp.ui.viewmodel.BookSearchViewModel
 import com.nohjunh.booksearchapp.util.Constants.SEARCH_BOOKS_TIME_DELAY
+import com.nohjunh.booksearchapp.util.collectLatestStateFlow
 
 class SearchFragment : Fragment() {
 
@@ -25,7 +25,14 @@ class SearchFragment : Fragment() {
 
     // 메인 액티비티에서 초기화 한 ViewModel 가져옴
     private lateinit var bookSearchViewModel: BookSearchViewModel
-    private lateinit var bookSearchAdapter: BookSearchAdapter
+
+    /*
+    // ListAdapter로 network 통신한 결과를 RV에 적용하는 경우
+    // private lateinit var bookSearchAdapter: BookSearchAdapter
+    */
+
+    // PagingAdapter로 network 통신을 한 결과를 가져오는 경우
+    private lateinit var bookSearchAdapter: BookSearchPagingAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,10 +57,20 @@ class SearchFragment : Fragment() {
         setupRecyclerView()
         searchBooks()
 
+        /*
+        // ListAdapter를 이용해 구독하는 경우
         bookSearchViewModel.searchResult.observe(viewLifecycleOwner, Observer {
             val books = it.documents
             bookSearchAdapter.submitList(books)
         })
+        */
+
+        // PagingAdapter를 이용해 구독하는 경우
+        // Util의 Extensions.kt 에서 확장함수를 만들어 사용
+        collectLatestStateFlow(bookSearchViewModel.searchPagingResult) {
+            bookSearchAdapter.submitData(it)
+        }
+        
     }
 
     override fun onDestroy() {
@@ -80,7 +97,14 @@ class SearchFragment : Fragment() {
                 text?.let {
                     val query = it.toString().trim()
                     if (query.isNotEmpty()) {
-                        bookSearchViewModel.searchBooks(query)
+                        /*
+                        // 기본적인 Retrofit Network 통신 Flow로 가져오기
+                        // bookSearchViewModel.searchBooks(query)
+                         */
+
+                        // Paging StateFlow로 가져오기
+                        bookSearchViewModel.searchBooksPaging(query)
+                        bookSearchViewModel.query = query
                     }
                 }
             }
@@ -90,7 +114,14 @@ class SearchFragment : Fragment() {
 
 
     private fun setupRecyclerView() {
+        /*
+        // ListAdapter를 적용하는 경우
         bookSearchAdapter = BookSearchAdapter()
+        */
+
+        // PagingAdapter를 적용하는 경우
+        bookSearchAdapter = BookSearchPagingAdapter()
+
         binding.rvSearchResult.apply {
             setHasFixedSize(true)
             layoutManager =
@@ -104,9 +135,23 @@ class SearchFragment : Fragment() {
             binding.rvSearchResult.adapter = bookSearchAdapter
         }
 
+        /*
+        // ListAdatper를 사용하는 경우
         // RV의 clickListener 설정
         bookSearchAdapter.bookHolderClickListener =
             object : BookSearchAdapter.BookHolderClickListener {
+                override fun onClick(view: View, positon: Int, book: Book) {
+                    val action = SearchFragmentDirections.actionSearchFragmentToBookFragment(book)
+                    Navigation.findNavController(viewCreatedIns).navigate(action)
+                }
+
+            }
+         */
+
+        // PagingAdpater를 사용하는 경우
+        // RV의 clickListener 설정
+        bookSearchAdapter.bookHolderClickListener =
+            object : BookSearchPagingAdapter.BookHolderClickListener {
                 override fun onClick(view: View, positon: Int, book: Book) {
                     val action = SearchFragmentDirections.actionSearchFragmentToBookFragment(book)
                     Navigation.findNavController(viewCreatedIns).navigate(action)

@@ -7,10 +7,7 @@ import com.nohjunh.booksearchapp.data.model.Book
 import com.nohjunh.booksearchapp.data.model.SearchResponse
 import com.nohjunh.booksearchapp.data.repository.BookSearchRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -106,6 +103,7 @@ class BookSearchViewModel(
     }
 
     // Paging
+    // Room DB
     val favoritePagingBooks: StateFlow<PagingData<Book>> =
     // getFavoritePagingBooks() 응답에다가 cachedIn을 붙여서 코루틴이 데이터스트림을 캐시하고
     // 공유 가능하게 만든다.
@@ -113,5 +111,25 @@ class BookSearchViewModel(
         bookSearchRepository.getFavoritePagingBooks()
             .cachedIn(viewModelScope)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PagingData.empty())
+
+    // Retrofit
+    private val _searchPagingResult = MutableStateFlow<PagingData<Book>>(PagingData.empty())
+    val searchPagingResult: StateFlow<PagingData<Book>>
+        get() = _searchPagingResult.asStateFlow()
+
+    // searchBooksPaging 응답을 StateFlow로 표시하기 위해서
+    // _searchPagingResult를 MutableStateFlow 타입으로 선언
+    // searchBooksPaging의 결과가 _searchPagingResult를 갱신하도록 하되,
+    // UI에는 변경 불가능한 searchPagingResult StateFlow를 노출시킴.
+    fun searchBooksPaging(query: String) {
+        viewModelScope.launch {
+            bookSearchRepository.searchBooksPaging(query, getSortMode())
+                .cachedIn(viewModelScope)
+                .collect {
+                    _searchPagingResult.value = it
+                }
+        }
+    }
+
 
 }

@@ -85,6 +85,7 @@ class BookSearchRepositoryImpl(
             }
     }
 
+    // Room DB Paging
     override fun getFavoritePagingBooks(): Flow<PagingData<Book>> {
         val pagingSourceFactory = {
             db.bookSearchDao().getFavoritePagingBooks()
@@ -99,6 +100,23 @@ class BookSearchRepositoryImpl(
             // getFavoritePagingBooks() 결과를 Factory에 전달
             pagingSourceFactory = pagingSourceFactory
         ).flow // flow를 붙여서 페이저를 flow로 만들어줌.
+
+    }
+
+    // Retrofit Paging
+    override fun searchBooksPaging(query: String, sort: String): Flow<PagingData<Book>> {
+        val pagingSourceFactory = {
+            BookSearchPagingSource(query, sort)
+        }
+
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGING_SIZE,
+                enablePlaceholders = false,
+                maxSize = PAGING_SIZE * 3
+            ),
+            pagingSourceFactory = pagingSourceFactory
+        ).flow
 
     }
 

@@ -34,7 +34,9 @@ interface BookSearchRepository {
 
     suspend fun getSortMode(): Flow<String>
 
-    // Paging
+    // Paging(Room DB)
     fun getFavoritePagingBooks(): Flow<PagingData<Book>>
 
+    // Paging(Retrofit)
+    fun searchBooksPaging(query: String, sort: String): Flow<PagingData<Book>>
 }
