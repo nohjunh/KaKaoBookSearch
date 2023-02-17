@@ -1,14 +1,18 @@
 package com.nohjunh.booksearchapp.ui.viewmodel
 
 import androidx.lifecycle.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.nohjunh.booksearchapp.data.model.Book
 import com.nohjunh.booksearchapp.data.model.SearchResponse
 import com.nohjunh.booksearchapp.data.repository.BookSearchRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 // BookSearchViewModel은 생성시에 초기값으로 bookSearchRepository를 전달받아야 하는데
 // 그냥으로는 ViewModel은 생성 시에 초기값을 받을 수 없기 때문에 factory를 만들어준다.
@@ -29,7 +33,7 @@ class BookSearchViewModel(
     // Retrofit 서비스의 리턴값은 MutableLiveData인 _searchResult에 저장
     // 외부에는 수정이 불가능한 searchResult LiveData를 expose 시킬 것이다.
     fun searchBooks(query: String) = viewModelScope.launch(Dispatchers.IO) {
-        val response = bookSearchRepository.searchBooks(query, "accuracy", 1, 15)
+        val response = bookSearchRepository.searchBooks(query, getSortMode(), 1, 15)
         if (response.isSuccessful) {
             response.body()?.let { body ->
                 _searchResult.postValue(body)
@@ -85,5 +89,29 @@ class BookSearchViewModel(
     companion object {
         private const val SAVE_STATE_KEY = "query"
     }
+
+
+    // DataStore
+    // 값을 저장하는 메소드
+    fun saveSortMode(value: String) = viewModelScope.launch(Dispatchers.IO) {
+        // 파일 작업이므로 IO 디스패처에서 사용
+        bookSearchRepository.saveSortMode(value)
+    }
+
+    suspend fun getSortMode() = withContext(Dispatchers.IO) {
+        // 셋팅값이므로 전체 데이터스트림을 구독할 필요가 없기에 flow에서 first(단일값)를 붙여
+        // 단일스트림 값만 가져오고
+        // 코루틴에서 반드시 값을 반환하고 종료하게 하는 withContext내부에서 실행되도록 함.
+        bookSearchRepository.getSortMode().first()
+    }
+
+    // Paging
+    val favoritePagingBooks: StateFlow<PagingData<Book>> =
+    // getFavoritePagingBooks() 응답에다가 cachedIn을 붙여서 코루틴이 데이터스트림을 캐시하고
+    // 공유 가능하게 만든다.
+        // UI에서 변화를 감시해야 하는 데이터이기 때문에 stateIn을 써서 StateFlow로 만들어줌
+        bookSearchRepository.getFavoritePagingBooks()
+            .cachedIn(viewModelScope)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PagingData.empty())
 
 }

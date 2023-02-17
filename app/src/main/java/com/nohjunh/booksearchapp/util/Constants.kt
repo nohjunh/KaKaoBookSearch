@@ -8,4 +8,10 @@ object Constants {
     const val BASE_URL = "https://dapi.kakao.com/"
     const val API_KEY = BuildConfig.bookApiKey
     const val SEARCH_BOOKS_TIME_DELAY = 100L
+
+    // DataStore DB에 사용할 이름
+    const val DATASTORE_NAME = "preferences_datastore"
+
+    // 한번에 가져올 페이지 수
+    const val PAGING_SIZE = 15
 }

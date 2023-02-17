@@ -1,7 +1,11 @@
 package com.nohjunh.booksearchapp.ui.view
 
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -12,6 +16,7 @@ import com.nohjunh.booksearchapp.data.repository.BookSearchRepositoryImpl
 import com.nohjunh.booksearchapp.databinding.ActivityMainBinding
 import com.nohjunh.booksearchapp.ui.viewmodel.BookSearchViewModel
 import com.nohjunh.booksearchapp.ui.viewmodel.BookSearchViewModelProviderFactory
+import com.nohjunh.booksearchapp.util.Constants.DATASTORE_NAME
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,6 +26,9 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var bookSearchViewModel: BookSearchViewModel
     private lateinit var navController: NavController
+
+    // DataStore singleton객체는 이런 식으로 만듬.
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(DATASTORE_NAME)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         val database = BookSearchDatabase.getInstance(this)
 
         // 메인 액티비티에서 ViewModel을 초기화 시켜줌.
-        val bookSearchRepository = BookSearchRepositoryImpl(database)
+        val bookSearchRepository = BookSearchRepositoryImpl(database, dataStore)
 
         /*
         ViewModel의 생성자에 파라미터가 필요할 경우

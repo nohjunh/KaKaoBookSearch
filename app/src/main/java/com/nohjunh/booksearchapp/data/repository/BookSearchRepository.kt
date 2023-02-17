@@ -1,5 +1,6 @@
 package com.nohjunh.booksearchapp.data.repository
 
+import androidx.paging.PagingData
 import com.nohjunh.booksearchapp.data.model.Book
 import com.nohjunh.booksearchapp.data.model.SearchResponse
 import kotlinx.coroutines.flow.Flow
@@ -9,6 +10,8 @@ import retrofit2.Response
 // 2. repository interface 작성
 // 3. repository interface를 구현하는
 // 4. Impl class 구현체 작성
+
+// interface는 함수 명세를 적기 위함.
 interface BookSearchRepository {
 
     // book search API를 사용하기 위한 메소드 interface 정의
@@ -25,5 +28,13 @@ interface BookSearchRepository {
     suspend fun deleteBooks(book: Book)
 
     fun getFavoriteBooks(): Flow<List<Book>>
+
+    // DataStore
+    suspend fun saveSortMode(mode: String)
+
+    suspend fun getSortMode(): Flow<String>
+
+    // Paging
+    fun getFavoritePagingBooks(): Flow<PagingData<Book>>
 
 }

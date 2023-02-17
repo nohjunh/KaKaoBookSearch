@@ -1,0 +1,24 @@
+Repository
+1. PagingSource : 데이터 소스와 그 소스에서 데이터를 검색하는 방법을 정의
+2. RemoteMediator : 로컬 데이터베이스에 네트워크 데이터를 캐시하는 동작을 관리
+
+ViewModel
+1. Pager : Repository에서 정의한 PagingSource와 PagingConfig를 생성자로 받아
+PagingData를 반환하는 API를 제공
+2. PagingData : Pager에 의해 페이징 된 데이터를 담는 컨테이너
+
+UI
+1. PagingDataAdapter : PagingData를 표시할 수 있는 RecyclerView 어댑터.
+
+-- 로컬DB Part
+1. 레파지토리의 개별데이터가 PagingSource로 변환되서
+2. Pager에 전달됨. Pager는 PagingConfig에 정의된 크기대로 PagingSource를 묶어서
+3. PagingData 덩어리로 만들어줌 -> 그래서 PagingData는 Flow로 감싸줘야 함.
+4. PagingData를 UI에 표시함.
+
+-- Network Part
+1. RemoteMediator가 Network 작업으로 얻은 데이터를  RoomDB에 캐시하고 앱이 캐시된 데이터를
+모두 사용하면 다시 Network에 작업을 요청함.
+2. 로컬 캐시인 Room DB는 로컬DB Part의 1번부터 시작함.
+
+Room응답에 Paging을 적용하면 전체 데이터를 받아오는 쿼리에서도 한번에 모든 데이터를 가져오지 않고 페이징 단위로 가져오기에 속도와 관리 측면에서 효율적임.

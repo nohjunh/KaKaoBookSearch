@@ -86,6 +86,7 @@ dependencies {
     // To use Kotlin annotation processing tool (kapt)
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
+    implementation "androidx.room:room-paging:2.4.3"
 
     // Retrofit
     def retrofit_ver = "2.9.0"
@@ -108,4 +109,12 @@ dependencies {
 
     // kotlinx serialization
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1'
+
+    // DataStore
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    // Paging
+    implementation "androidx.paging:paging-runtime-ktx:3.1.1"
+
+
 }

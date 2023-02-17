@@ -1,5 +1,6 @@
 package com.nohjunh.booksearchapp.data.db
 
+import androidx.paging.PagingSource
 import androidx.room.*
 import com.nohjunh.booksearchapp.data.model.Book
 import kotlinx.coroutines.flow.Flow
@@ -17,8 +18,15 @@ interface BookSearchDAO {
     @Delete
     suspend fun deleteBook(book: Book)
 
+    // DB로부터 전체 데이터를 Flow 받아옴.
     @Query("SELECT * FROM books")
     fun getFavoriteBooks(): Flow<List<Book>>
 
+    // PagingSource 정의
+    // 레파지토리로부터 페이징소스를 반환받아야 하는데,
+    // Room은 쿼리결과를 페이징소스 타입으로 반환이 가능
+    // DB로부터 페이징소스로 받아옴.
+    @Query("SELECT * FROM books")
+    fun getFavoritePagingBooks(): PagingSource<Int, Book>
 
 }
