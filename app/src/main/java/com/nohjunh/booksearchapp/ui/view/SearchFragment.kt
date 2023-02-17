@@ -5,13 +5,16 @@ import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nohjunh.booksearchapp.data.model.Book
 import com.nohjunh.booksearchapp.databinding.FragmentSearchBinding
+import com.nohjunh.booksearchapp.ui.adapter.BookSearchLoadStateAdapter
 import com.nohjunh.booksearchapp.ui.adapter.BookSearchPagingAdapter
 import com.nohjunh.booksearchapp.ui.viewmodel.BookSearchViewModel
 import com.nohjunh.booksearchapp.util.Constants.SEARCH_BOOKS_TIME_DELAY
@@ -56,6 +59,7 @@ class SearchFragment : Fragment() {
 
         setupRecyclerView()
         searchBooks()
+        setupLoadState()
 
         /*
         // ListAdapter를 이용해 구독하는 경우
@@ -70,7 +74,7 @@ class SearchFragment : Fragment() {
         collectLatestStateFlow(bookSearchViewModel.searchPagingResult) {
             bookSearchAdapter.submitData(it)
         }
-        
+
     }
 
     override fun onDestroy() {
@@ -112,6 +116,53 @@ class SearchFragment : Fragment() {
         }
     }
 
+    // LoadState의 Listener를 만들어준다.
+    private fun setupLoadState() {
+        // 리스너를 단다. 리스너에서는 LoadState값(combinedLoadStates)을 반환 받는다.
+        bookSearchAdapter.addLoadStateListener { combinedLoadStates ->
+            // combinedLoadState는 PagingSource, RemoteMediator 2가지의 로딩 상태를 가지고 있다.
+            // 이 예제에서는 RemoteMediator는 안다루므로 source만 다루면 된다.
+            val loadState = combinedLoadStates.source
+
+            // loadState에는
+            // 1. Loading 시작시에 만들어지는 prepend, 2.Loading 종료시에 만들어지는 append, 3. Loading값을 갱신할 때 만들어지는 refresh
+            // 3가지의 속성을 가지고 있다.
+            val isListEmpty = // 리스트가 비어있는지 판정
+                bookSearchAdapter.itemCount < 1
+                        && loadState.refresh is LoadState.NotLoading
+                        && loadState.append.endOfPaginationReached
+
+            // 아래 2개는 각각 반대의 동작을 하면 됨
+            binding.tvEmptylist.isVisible = isListEmpty
+            binding.rvSearchResult.isVisible = !isListEmpty
+
+            // 로딩중일 때는 progressBar 표시
+            binding.progressBar.isVisible = loadState.refresh is LoadState.Loading
+
+            /*
+            // 에러 발생 시
+            binding.btnRetry.isVisible =
+                loadState.refresh is LoadState.Error
+                        || loadState.append is LoadState.Error
+                        || loadState.prepend is LoadState.Error
+            // 에러 발생 시 토스트로 화면에 표시
+            val errorState: LoadState.Error? =
+                loadState.append as? LoadState.Error
+                    ?: loadState.prepend as? LoadState.Error
+                    ?: loadState.refresh as? LoadState.Error
+            errorState?.let {
+                Toast.makeText(requireContext(), it.error.message, Toast.LENGTH_SHORT).show()
+            }
+            */
+        }
+
+        /*
+        // retry버튼에는 클릭리스너를 달아서 버튼 클릭 시 페이징어댑터를 다시 갱신하도록 함.
+        binding.btnRetry.setOnClickListener {
+            bookSearchAdapter.retry()
+        }
+        */
+    }
 
     private fun setupRecyclerView() {
         /*
@@ -132,7 +183,15 @@ class SearchFragment : Fragment() {
                     DividerItemDecoration.VERTICAL
                 )
             )
-            binding.rvSearchResult.adapter = bookSearchAdapter
+            // LoadStateAdapter를 쓰지 않는 경우
+            // binding.rvSearchResult.adapter = bookSearchAdapter
+
+            // LoadStateAdapter를 쓰는 경우
+            // 리사이클러뷰에서 어댑터를 셋업을 할 때 withLoadStateFooter를 이용해서 어댑터를 연결하면 되는데
+            // footer만 나타나게 한 경우 (header도 나타나게 할 수 있음, 둘 다 나타나게도 가능)
+            binding.rvSearchResult.adapter = bookSearchAdapter.withLoadStateFooter(
+                footer = BookSearchLoadStateAdapter(bookSearchAdapter::retry)
+            )
         }
 
         /*
