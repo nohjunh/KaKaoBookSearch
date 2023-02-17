@@ -1,8 +1,8 @@
 package com.nohjunh.booksearchapp.data.repository
 
-import androidx.lifecycle.LiveData
 import com.nohjunh.booksearchapp.data.model.Book
 import com.nohjunh.booksearchapp.data.model.SearchResponse
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 
 // 1. data repository 패키지를 만들고
@@ -24,6 +24,6 @@ interface BookSearchRepository {
 
     suspend fun deleteBooks(book: Book)
 
-    fun getFavoriteBooks(): LiveData<List<Book>>
+    fun getFavoriteBooks(): Flow<List<Book>>
 
 }

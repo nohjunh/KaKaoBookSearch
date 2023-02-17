@@ -5,6 +5,9 @@ import com.nohjunh.booksearchapp.data.model.Book
 import com.nohjunh.booksearchapp.data.model.SearchResponse
 import com.nohjunh.booksearchapp.data.repository.BookSearchRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 // BookSearchViewModel은 생성시에 초기값으로 bookSearchRepository를 전달받아야 하는데
@@ -46,8 +49,23 @@ class BookSearchViewModel(
         bookSearchRepository.deleteBooks(book)
     }
 
-    val favoriteBooks: LiveData<List<Book>>
+    // favoriteBooks를 그냥 Flow가 아닌
+    // StateFlow로 함으로써 flow동작을 favoriteBooks의 lifecycle과
+    // 동기화 시킨다.
+    /*
+    val favoriteBooks: Flow<List<Book>>
         get() = bookSearchRepository.getFavoriteBooks()
+    */
+    // stateIn을 써서 Flow타입을 StateFlow로 변경해주고
+    // scope는 viewModelScope이고, 구독을 시작하는 시점은 WhileSubscribed(5000ms)*
+    // why? 5000ms여야 화면을 가로,세로를 바꾸는 과정에서 앱의 lifecycle이 변화한 것인지
+    // 아니면 앱이 백그라운드로 가서 변화한 것인지를 파악할 수 있다.
+    // listOf 에는 초기값을 넣어준다. Book은 list형식이기에 그냥 ListOf를 넣어줌
+    val favoriteBooks: StateFlow<List<Book>>
+        get() = bookSearchRepository.getFavoriteBooks()
+            .stateIn(
+                viewModelScope, SharingStarted.WhileSubscribed(5000), listOf()
+            )
 
     // --SavedState--
     // 저장 및 로드에 사용할 SAVE_STATE_KEY정의 후
