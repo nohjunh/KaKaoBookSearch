@@ -1,10 +1,12 @@
 package com.nohjunh.booksearchapp.ui.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.nohjunh.booksearchapp.R
 import com.nohjunh.booksearchapp.databinding.FragmentSettingsBinding
@@ -40,6 +42,7 @@ class SettingsFragment : Fragment() {
 
         saveSettings()
         loadSettings()
+        showWorkStatus()
     }
 
     // 체크된 버튼을 확인하고 해당되는 SORT enum값을 받아와서
@@ -52,6 +55,14 @@ class SettingsFragment : Fragment() {
                 else -> return@setOnCheckedChangeListener
             }
             bookSearchViewModel.saveSortMode(value)
+        }
+        binding.swCacheDelete.setOnCheckedChangeListener { _, isChecked ->
+            bookSearchViewModel.saveCacheDeleteMode(isChecked)
+            if (isChecked) {
+                bookSearchViewModel.setWork()
+            } else {
+                bookSearchViewModel.deleteWork()
+            }
         }
     }
 
@@ -66,6 +77,24 @@ class SettingsFragment : Fragment() {
             binding.rgSort.check(buttonId)
         }
 
+        lifecycleScope.launch {
+            val mode = bookSearchViewModel.getCacheDeleteMode()
+            binding.swCacheDelete.isChecked = mode
+        }
+    }
+
+    private fun showWorkStatus() {
+        // getWorkStatus()이 반환형이 LiveData이므로 observe로 구독 가능
+        bookSearchViewModel.getWorkStatus().observe(viewLifecycleOwner, Observer { workInfo ->
+            Log.d("WorkManager", workInfo.toString())
+            // 초기에는 값이 존재하지 않기에 isEmpty로 분기를 나눔
+            if (workInfo.isEmpty()) {
+                binding.tvWorkStatus.text = "No wokers"
+            } else {
+                // workInfo는 [0]번째로 가져오면 된다. Log확인해보면 됨.
+                binding.tvWorkStatus.text = workInfo[0].state.toString()
+            }
+        })
     }
 
     override fun onDestroy() {

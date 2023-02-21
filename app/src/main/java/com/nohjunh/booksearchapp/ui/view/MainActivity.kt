@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import androidx.work.WorkManager
 import com.nohjunh.booksearchapp.R
 import com.nohjunh.booksearchapp.data.db.BookSearchDatabase
 import com.nohjunh.booksearchapp.data.repository.BookSearchRepositoryImpl
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     // DataStore singleton객체는 이런 식으로 만듬.
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(DATASTORE_NAME)
+    private val workManager = WorkManager.getInstance(application)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         Koin과 Hilt가 위와 같은 방법으로 해결해 줄 수 있습니다.
          */
         // saveStateOwner는 this@MainActivity
-        val factory = BookSearchViewModelProviderFactory(bookSearchRepository, this)
+        val factory = BookSearchViewModelProviderFactory(bookSearchRepository, workManager, this)
         bookSearchViewModel = ViewModelProvider(this, factory)[BookSearchViewModel::class.java]
 
         /*

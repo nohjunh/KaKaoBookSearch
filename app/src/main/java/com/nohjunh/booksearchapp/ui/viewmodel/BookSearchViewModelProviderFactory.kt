@@ -5,6 +5,7 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
+import androidx.work.WorkManager
 import com.nohjunh.booksearchapp.data.repository.BookSearchRepository
 
 // bookSearchRepository를 초기값으로 전달받아서
@@ -27,6 +28,7 @@ import com.nohjunh.booksearchapp.data.repository.BookSearchRepository
 // stateStateHandle을 사용할 것이므로 ViewModelProviderFactory도 변경
 class BookSearchViewModelProviderFactory(
     private val bookSearchRepository: BookSearchRepository,
+    private val workManager : WorkManager,
     owner: SavedStateRegistryOwner,
     defaultArgs: Bundle? = null
 ) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
@@ -36,7 +38,7 @@ class BookSearchViewModelProviderFactory(
         handle: SavedStateHandle
     ): T {
         if (modelClass.isAssignableFrom(BookSearchViewModel::class.java)) {
-            return BookSearchViewModel(bookSearchRepository, handle) as T
+            return BookSearchViewModel(bookSearchRepository, workManager, handle) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

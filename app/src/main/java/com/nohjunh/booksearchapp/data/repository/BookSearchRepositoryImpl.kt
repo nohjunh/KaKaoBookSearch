@@ -1,10 +1,7 @@
 package com.nohjunh.booksearchapp.data.repository
 
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -12,6 +9,7 @@ import com.nohjunh.booksearchapp.data.api.RetrofitInstance.api
 import com.nohjunh.booksearchapp.data.db.BookSearchDatabase
 import com.nohjunh.booksearchapp.data.model.Book
 import com.nohjunh.booksearchapp.data.model.SearchResponse
+import com.nohjunh.booksearchapp.data.repository.BookSearchRepositoryImpl.PreferencesKeys.CACHE_DELETE_MODE
 import com.nohjunh.booksearchapp.data.repository.BookSearchRepositoryImpl.PreferencesKeys.SORT_MODE
 import com.nohjunh.booksearchapp.util.Constants.PAGING_SIZE
 import com.nohjunh.booksearchapp.util.Sort
@@ -56,7 +54,7 @@ class BookSearchRepositoryImpl(
         // 저장 및 불러오기에 사용할 Key를 PreferencesKeys에 정의해줌.
         // DataStore은 typeSafe를 위해 PreferencesKey메소드로 사용
         val SORT_MODE = stringPreferencesKey("sort_mode")
-
+        val CACHE_DELETE_MODE = booleanPreferencesKey("Cache_delete_mode")
     }
 
     // 저장하는 작업은 코루틴 안에서 일어나야 하기에 함수에 suspend 붙임
@@ -79,9 +77,30 @@ class BookSearchRepositoryImpl(
                     throw exception
                 }
             }
-            // map 블록 안에서 key를 전달해서 flow를 반환 받으면 된다.
+            // map 블록 안에서 key를 전달해서 flow(메소드반환값)를 반환 받으면 된다.
             .map { prefs ->
                 prefs[SORT_MODE] ?: Sort.ACCURACY.value // 기본 값은 ACCURACY로
+            }
+    }
+
+    override suspend fun saveCacheDeleteMode(mode: Boolean) {
+        dataStore.edit { prefs ->
+            prefs[CACHE_DELETE_MODE] = mode
+        }
+    }
+
+    override suspend fun getCacheDeleteMode(): Flow<Boolean> {
+        return dataStore.data
+            .catch { exception ->
+                if(exception is IOException) {
+                    exception.printStackTrace()
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
+            .map { prefs ->
+                prefs[CACHE_DELETE_MODE] ?: false
             }
     }
 
