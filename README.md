@@ -5,4 +5,4 @@ The following options were not recognized by any processor: '[dagger.fastInit, k
 다음과 같은 에러가 뜬다면,
 https://stackoverflow.com/questions/58216710/the-following-options-were-not-recognized-by-any-processor-kapt-kotlin-genera
 
-kapt "android.arch.persistence.room:compiler:$room_version"를 적용.
+kapt "android.arch.persistence.room:compiler:$room_version"를 적용 sync 후 삭제 sync
