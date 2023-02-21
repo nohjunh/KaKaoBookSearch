@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -16,8 +17,9 @@ import com.nohjunh.booksearchapp.databinding.FragmentFavoriteBinding
 import com.nohjunh.booksearchapp.ui.adapter.BookSearchPagingAdapter
 import com.nohjunh.booksearchapp.ui.viewmodel.BookSearchViewModel
 import com.nohjunh.booksearchapp.util.collectLatestStateFlow
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class FavoriteFragment : Fragment() {
 
     private var _binding: FragmentFavoriteBinding? = null
@@ -25,7 +27,11 @@ class FavoriteFragment : Fragment() {
 
     private lateinit var viewCreatedIns: View
 
+    /* Hilt 사용 전
     private lateinit var bookSearchViewModel: BookSearchViewModel
+    */
+
+    private val bookSearchViewModel by activityViewModels<BookSearchViewModel>()
 
     // ListAdapter를 사용했을 경우
     //private lateinit var bookSearchAdapter: BookSearchAdapter
@@ -49,7 +55,10 @@ class FavoriteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        /* Hilt 사용 전
         bookSearchViewModel = (activity as MainActivity).bookSearchViewModel
+        */
 
         viewCreatedIns = view
 

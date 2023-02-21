@@ -28,6 +28,26 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <!-- WorkManager 이니셜라이제이션으로 인해 WorkManager를 생성하는게 아니라
+        커스텀으로 생성할 것(Application클래스에서 lateinit var workerFactory : HiltWorkerFactory로 생성하고 있음)
+        이므로 WorkManager 이니셜라이제이져가 App Starter에 의해 자동으로
+        실행되지 않도록 함.
+        https://developer.android.com/topic/libraries/architecture/workmanager/advanced/custom-configuration?hl=ko
+        -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <!-- If you are using androidx.startup to initialize other components -->
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
+
     </application>
 
 </manifest>

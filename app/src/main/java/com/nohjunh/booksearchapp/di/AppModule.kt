@@ -102,4 +102,9 @@ object AppModule {
     fun provideWorkManager(@ApplicationContext context : Context) : WorkManager =
         WorkManager.getInstance(context)
 
+    @Singleton
+    @Provides
+    // Worker 내부에 주입할 의존성 정의
+    // 캐시 최적화 결과를 반영하는 String을 만들어 이거를 Worker클래스에 주입시키면 됨.
+    fun provideCacheDeleteResult() : String = "Cache has deleted by Hilt"
 }

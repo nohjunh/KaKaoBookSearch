@@ -8,18 +8,27 @@ import com.nohjunh.booksearchapp.data.model.Book
 import com.nohjunh.booksearchapp.data.model.SearchResponse
 import com.nohjunh.booksearchapp.data.repository.BookSearchRepository
 import com.nohjunh.booksearchapp.worker.CacheDeleteWorker
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
+
+/*
+Hilt를 쓰기 전
 // BookSearchViewModel은 생성시에 초기값으로 bookSearchRepository를 전달받아야 하는데
 // 그냥으로는 ViewModel은 생성 시에 초기값을 받을 수 없기 때문에 factory를 만들어준다.
-class BookSearchViewModel(
+ */
+
+/* Hilt를 쓰고 난 후 */
+@HiltViewModel // @HiltViewModel을 붙여서 BookSearchViewModel을 의존성 주입이 가능한 Scope로 만들어줌.
+class BookSearchViewModel @Inject constructor( // @Inject constructor를 이용해 BookSearchRepository와 WorkManger를 주입해줌.
     private val bookSearchRepository: BookSearchRepository,
     private val workManager : WorkManager,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle // 이거는 Module 설정 없이도 자동으로 주입됨.
 ) : ViewModel() {
 
     // APi

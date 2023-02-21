@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -19,15 +20,22 @@ import com.nohjunh.booksearchapp.ui.adapter.BookSearchPagingAdapter
 import com.nohjunh.booksearchapp.ui.viewmodel.BookSearchViewModel
 import com.nohjunh.booksearchapp.util.Constants.SEARCH_BOOKS_TIME_DELAY
 import com.nohjunh.booksearchapp.util.collectLatestStateFlow
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewCreatedIns: View
 
+    /* Hilt 사용 전
     // 메인 액티비티에서 초기화 한 ViewModel 가져옴
     private lateinit var bookSearchViewModel: BookSearchViewModel
+    */
+
+    private val bookSearchViewModel by activityViewModels<BookSearchViewModel>()
+
 
     /*
     // ListAdapter로 network 통신한 결과를 RV에 적용하는 경우
@@ -39,7 +47,7 @@ class SearchFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
     }
 
     override fun onCreateView(
@@ -54,7 +62,11 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        /* Hilt 사용 전
         bookSearchViewModel = (activity as MainActivity).bookSearchViewModel
+        */
+
         viewCreatedIns = view
 
         setupRecyclerView()

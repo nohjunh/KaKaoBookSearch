@@ -2,7 +2,7 @@ package com.nohjunh.booksearchapp.data.repository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.nohjunh.booksearchapp.data.api.RetrofitInstance.api
+import com.nohjunh.booksearchapp.data.api.BookSearchApi
 import com.nohjunh.booksearchapp.data.model.Book
 import com.nohjunh.booksearchapp.util.Constants.PAGING_SIZE
 import retrofit2.HttpException
@@ -12,6 +12,7 @@ import java.io.IOException
 // 페이징 소스<페이지 타입, 데이터타입>를 상속 받음.
 // 페이지 타입은 1,2,..3 이런 식이므로 Int로 지정
 class BookSearchPagingSource(
+    private val api : BookSearchApi,
     private val query: String,
     private val sort: String
 ) : PagingSource<Int, Book>() {

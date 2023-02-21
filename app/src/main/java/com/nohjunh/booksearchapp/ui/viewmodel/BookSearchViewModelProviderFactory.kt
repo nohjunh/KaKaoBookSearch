@@ -11,7 +11,7 @@ import com.nohjunh.booksearchapp.data.repository.BookSearchRepository
 // bookSearchRepository를 초기값으로 전달받아서
 // ViewModel을 반환하는 ViewModel ProviderFactory.
 
-@Suppress("UNCHECKED_CAST")
+//@Suppress("UNCHECKED_CAST")
 //class BookSearchViewModelProviderFactory(
 //    private val bookSearchRepository: BookSearchRepository
 //) : ViewModelProvider.Factory {
@@ -25,6 +25,10 @@ import com.nohjunh.booksearchapp.data.repository.BookSearchRepository
 //    }
 //}
 
+
+/*
+// ViewModel이 delegate(by viewModels, by activityViewModels)에 의해
+// 만들어지므로 더 이상 ViewModelFactory가 필요 없음
 // stateStateHandle을 사용할 것이므로 ViewModelProviderFactory도 변경
 class BookSearchViewModelProviderFactory(
     private val bookSearchRepository: BookSearchRepository,
@@ -43,3 +47,4 @@ class BookSearchViewModelProviderFactory(
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
+*/

@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.nohjunh.booksearchapp.data.api.RetrofitInstance.api
+import com.nohjunh.booksearchapp.data.api.BookSearchApi
 import com.nohjunh.booksearchapp.data.db.BookSearchDatabase
 import com.nohjunh.booksearchapp.data.model.Book
 import com.nohjunh.booksearchapp.data.model.SearchResponse
@@ -18,12 +18,19 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import retrofit2.Response
 import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class BookSearchRepositoryImpl(
+@Singleton // BookSearchRepostioryImple에 @singleton을 붙여서 의존성 주입이 가능한 Scope로 지정
+// @Inject constructor를 붙여 매개변수를 작성하게 되면
+// 그 생성자 매개변수들(BookSearchDatabase, DataStore<Preferences>, BookSearchAPi)
+// 들은 Hilt가 알아서 주입하게 됨.
+class BookSearchRepositoryImpl @Inject constructor(
     // 생성자로 BookSearchDatabase를 받음.
     private val db: BookSearchDatabase,
     // dataStore 객체를 초기값으로 받아줌.
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>,
+    private val api : BookSearchApi
 ) : BookSearchRepository {
 
     override suspend fun searchBooks(
@@ -125,7 +132,7 @@ class BookSearchRepositoryImpl(
     // Retrofit Paging
     override fun searchBooksPaging(query: String, sort: String): Flow<PagingData<Book>> {
         val pagingSourceFactory = {
-            BookSearchPagingSource(query, sort)
+            BookSearchPagingSource(api, query, sort)
         }
 
         return Pager(
