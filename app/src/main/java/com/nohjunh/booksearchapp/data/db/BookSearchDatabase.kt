@@ -19,6 +19,9 @@ abstract class BookSearchDatabase : RoomDatabase() {
     // ROOM에서 사용할 DAO 지정
     abstract fun bookSearchDao(): BookSearchDAO
 
+    /*
+    Hile Module화 했으므로 더이상 필요 없음.
+
     // 중복으로 생성하지 않도록 singleton 설정
     companion object {
         @Volatile
@@ -38,5 +41,6 @@ abstract class BookSearchDatabase : RoomDatabase() {
                 }
             }
     }
+     */
 
 }

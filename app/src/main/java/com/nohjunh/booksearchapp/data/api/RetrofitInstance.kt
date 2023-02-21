@@ -12,6 +12,9 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 // 그래서 object class와 by lazy를 사용해
 // 실제 사용될 때 만들어지고 단 하나의 instance만 만들어질 수 있도록
 // singleton으로 구현함.
+
+/*
+Hilt로 Module화 했기에 더이상 필요없음.
 object RetrofitInstance {
     private val okHttpClient: OkHttpClient by lazy {
         val httpLoggingInterceptor = HttpLoggingInterceptor()
@@ -34,3 +37,4 @@ object RetrofitInstance {
         retrofit.create(BookSearchApi::class.java)
     }
 }
+ */
