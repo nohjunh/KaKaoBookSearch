@@ -7,12 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.nohjunh.booksearchapp.databinding.FragmentBookBinding
-import com.nohjunh.booksearchapp.ui.viewmodel.BookSearchViewModel
+import com.nohjunh.booksearchapp.ui.viewmodel.BookViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 // Fragment에 @AndroidEntryPoint를 붙여서 의존성 주입이 가능한 Scope로 만들어준다.
@@ -28,7 +28,13 @@ class BookFragment : Fragment() {
 
     /* Hilt 사용 후 */
     // by activityViewModels로 ViewModel를 생성한다.
-    private val bookSearchViewModel by activityViewModels<BookSearchViewModel>()
+    //private val bookSearchViewModel by activityViewModels<BookSearchViewModel>()
+    /*
+    viewModel을 각 View마다 나눠 관심사를 분리했으므로 by activityViewModel로 viewModel을 생성하는게 아니라
+    그냥 by viewModels로 viewModel을 생성하면 된다.
+    lifecycle을 activity로 따를 필요가 없기 때문.
+     */
+    private val bookViewModel : BookViewModel by viewModels()
 
     // 이전 프래그먼트로부터 전달받은 데이터 받기(safeArgs)
     // val safeArgs : [전달받은프래그먼트의이름]+[Args] by navArgs()
@@ -74,7 +80,7 @@ class BookFragment : Fragment() {
         }
 
         binding.fabFavorite.setOnClickListener {
-            bookSearchViewModel.saveBook(book) // 프래그먼트로 전달 받은 book 아규먼트를 saveBook()에 넣어서 전달
+            bookViewModel.saveBook(book) // 프래그먼트로 전달 받은 book 아규먼트를 saveBook()에 넣어서 전달
             Snackbar.make(view, "Book has saved", Snackbar.LENGTH_SHORT).show()
         }
     }

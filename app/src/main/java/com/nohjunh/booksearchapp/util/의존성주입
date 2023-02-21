@@ -5,3 +5,6 @@ BookSearchRepository Instance는 BookSearchViewModel에 주입한다.
 WorkManager는 서비스를 관리하는 클래스이므로
 내부에 의존성을 주입하는 방법은 다른 것과 다르게
 Hilt Extension을 사용해야 함.
+
+각 Fragment에서는 by activityViewModels() 대신
+by viewModels()로 ViewModel을 각각 초기화 시킨다.

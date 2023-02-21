@@ -1,3 +1,4 @@
+/*
 package com.nohjunh.booksearchapp.ui.viewmodel
 
 import androidx.lifecycle.*
@@ -17,13 +18,17 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
+*/
 /*
 Hilt를 쓰기 전
 // BookSearchViewModel은 생성시에 초기값으로 bookSearchRepository를 전달받아야 하는데
 // 그냥으로는 ViewModel은 생성 시에 초기값을 받을 수 없기 때문에 factory를 만들어준다.
- */
+ *//*
 
-/* Hilt를 쓰고 난 후 */
+
+*/
+/* Hilt를 쓰고 난 후 *//*
+
 @HiltViewModel // @HiltViewModel을 붙여서 BookSearchViewModel을 의존성 주입이 가능한 Scope로 만들어줌.
 class BookSearchViewModel @Inject constructor( // @Inject constructor를 이용해 BookSearchRepository와 WorkManger를 주입해줌.
     private val bookSearchRepository: BookSearchRepository,
@@ -66,10 +71,12 @@ class BookSearchViewModel @Inject constructor( // @Inject constructor를 이용�
     // favoriteBooks를 그냥 Flow가 아닌
     // StateFlow로 함으로써 flow동작을 favoriteBooks의 lifecycle과
     // 동기화 시킨다.
-    /*
+    */
+/*
     val favoriteBooks: Flow<List<Book>>
         get() = bookSearchRepository.getFavoriteBooks()
-    */
+    *//*
+
     // stateIn을 써서 Flow타입을 StateFlow로 변경해주고
     // scope는 viewModelScope이고, 구독을 시작하는 시점은 WhileSubscribed(5000ms)*
     // why? 5000ms여야 화면을 가로,세로를 바꾸는 과정에서 앱의 lifecycle이 변화한 것인지
@@ -182,3 +189,4 @@ class BookSearchViewModel @Inject constructor( // @Inject constructor를 이용�
         workManager.getWorkInfosForUniqueWorkLiveData(WORKER_KEY)
 
 }
+*/

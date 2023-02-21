@@ -7,7 +7,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.nohjunh.booksearchapp.R
 import com.nohjunh.booksearchapp.databinding.ActivityMainBinding
-import com.nohjunh.booksearchapp.ui.viewmodel.BookSearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 // Hilt 사용을 위해 AndroidEntryPoint를 붙여주고

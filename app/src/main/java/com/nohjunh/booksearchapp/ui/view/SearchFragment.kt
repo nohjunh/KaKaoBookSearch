@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -17,7 +17,7 @@ import com.nohjunh.booksearchapp.data.model.Book
 import com.nohjunh.booksearchapp.databinding.FragmentSearchBinding
 import com.nohjunh.booksearchapp.ui.adapter.BookSearchLoadStateAdapter
 import com.nohjunh.booksearchapp.ui.adapter.BookSearchPagingAdapter
-import com.nohjunh.booksearchapp.ui.viewmodel.BookSearchViewModel
+import com.nohjunh.booksearchapp.ui.viewmodel.SearchViewModel
 import com.nohjunh.booksearchapp.util.Constants.SEARCH_BOOKS_TIME_DELAY
 import com.nohjunh.booksearchapp.util.collectLatestStateFlow
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,8 +33,14 @@ class SearchFragment : Fragment() {
     // 메인 액티비티에서 초기화 한 ViewModel 가져옴
     private lateinit var bookSearchViewModel: BookSearchViewModel
     */
+    /*
+    viewModel을 각 View마다 나눠 관심사를 분리했으므로 by activityViewModel로 viewModel을 생성하는게 아니라
+    그냥 by viewModels로 viewModel을 생성하면 된다.
+    lifecycle을 activity로 따를 필요가 없기 때문.
 
     private val bookSearchViewModel by activityViewModels<BookSearchViewModel>()
+    */
+    private val searchViewModel by viewModels<SearchViewModel>()
 
 
     /*
@@ -83,7 +89,7 @@ class SearchFragment : Fragment() {
 
         // PagingAdapter를 이용해 구독하는 경우
         // Util의 Extensions.kt 에서 확장함수를 만들어 사용
-        collectLatestStateFlow(bookSearchViewModel.searchPagingResult) {
+        collectLatestStateFlow(searchViewModel.searchPagingResult) {
             bookSearchAdapter.submitData(it)
         }
 
@@ -99,7 +105,7 @@ class SearchFragment : Fragment() {
         var endTime: Long
 
         binding.etSearch.text =
-            Editable.Factory.getInstance().newEditable(bookSearchViewModel.query)
+            Editable.Factory.getInstance().newEditable(searchViewModel.query)
 
         // editText는 addTextChangedListener를 붙여서
         // text가 입력되면 그 값을 viewModel에 전달해서 ViewModel의 searchBooks()를 실행시킬 것인데,
@@ -119,8 +125,8 @@ class SearchFragment : Fragment() {
                          */
 
                         // Paging StateFlow로 가져오기
-                        bookSearchViewModel.searchBooksPaging(query)
-                        bookSearchViewModel.query = query
+                        searchViewModel.searchBooksPaging(query)
+                        searchViewModel.query = query
                     }
                 }
             }

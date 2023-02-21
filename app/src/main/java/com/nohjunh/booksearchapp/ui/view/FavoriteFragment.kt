@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -15,7 +15,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.nohjunh.booksearchapp.data.model.Book
 import com.nohjunh.booksearchapp.databinding.FragmentFavoriteBinding
 import com.nohjunh.booksearchapp.ui.adapter.BookSearchPagingAdapter
-import com.nohjunh.booksearchapp.ui.viewmodel.BookSearchViewModel
+import com.nohjunh.booksearchapp.ui.viewmodel.FavoriteViewModel
 import com.nohjunh.booksearchapp.util.collectLatestStateFlow
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,7 +31,15 @@ class FavoriteFragment : Fragment() {
     private lateinit var bookSearchViewModel: BookSearchViewModel
     */
 
+    /*
+    viewModel을 각 View마다 나눠 관심사를 분리했으므로 by activityViewModel로 viewModel을 생성하는게 아니라
+    그냥 by viewModels로 viewModel을 생성하면 된다.
+    lifecycle을 activity로 따를 필요가 없기 때문.
+
     private val bookSearchViewModel by activityViewModels<BookSearchViewModel>()
+    */
+
+    private val favoriteViewModel by viewModels<FavoriteViewModel>()
 
     // ListAdapter를 사용했을 경우
     //private lateinit var bookSearchAdapter: BookSearchAdapter
@@ -109,7 +117,7 @@ class FavoriteFragment : Fragment() {
         // collect가 아닌 collectLatest로 값을 구독해서
         // Paging은 시간에 따라 값이 달라질 가능성이 크기 때문에
         // 항상 기존의 페이징 값을 캔슬하고 새 값으로 적용시켜야 함.
-        collectLatestStateFlow(bookSearchViewModel.favoritePagingBooks) {
+        collectLatestStateFlow(favoriteViewModel.favoritePagingBooks) {
             // ListAdapter는 sumbitList이지만 PagingAdapter는 sumbitData임.
             bookSearchAdapter.submitData(it)
         }
@@ -207,10 +215,10 @@ class FavoriteFragment : Fragment() {
                 val pagedBook = bookSearchAdapter.peek(position)
                 // null처리를 할 수 있도록 처리
                 pagedBook?.let { book ->
-                    bookSearchViewModel.deleteBook(book)
+                    favoriteViewModel.deleteBook(book)
                     Snackbar.make(view, "Book has deleted", Snackbar.LENGTH_SHORT).apply {
                         setAction("Undo") {
-                            bookSearchViewModel.saveBook(book)
+                            favoriteViewModel.saveBook(book)
                         }
                     }.show()
                 }
